@@ -189,7 +189,31 @@
 			\begin{center}
 				\includegraphics[width=0.55\textwidth]{Revenue_vs_backup}
 			\end{center}
-			
+\section{Optimizing backups}
+	When it comes to protection from ransomware, the most efficient method is building backups. This, however, has to be done regularly, as the effects after a potential attack will otherwise be insignificant. That is why it is important for backup protocols to be carefully build, considering both the risks of being attacked and the resources needed for the job. Furthermore, optimizing the backups can simultaneously increase the security level and save money.
+	\subsection{Theoretical setting}
+		The idea behind the described model is to calculate and optimize the expected price of the recovery in case of an attack.\par
+		We will consider a backup as a structure, containing the following properties:
+		$$
+		B
+		\begin{cases}
+			d \text{: the date on which the backup was made, as a day difference from a starting point}\\
+			p \text{: the probability that the recovery is unsuccessful for any reason}\\
+			r \text{: the price of trying to recover the data from the given backup}
+		\end{cases}
+		$$
+		In this case data value should clearly be taken into account from a subjective point of view. Even though on the market some data may not be worth a lot, if it is essential for the functioning of a given company, it is clear that it will be willing to pay a lot to regain access to it immediately. Therefore, in the described model data value is considered an ever-increasing amount, for the purposes of the research the "work rate" of the company is taken as a constant. We will denote it with $w$\par 	
+		Given a disaster date (on which the attack occurs) a successful backup, we can calculate the cost of the recovery in the following way:
+		$$
+		S=\Delta t.w + r,
+		$$
+		where with $\Delta t$ we denote the difference in days between the successful backup and the disaster date.\par
+		In case none of the backups is successful, we will assign a total value of $T$, which corresponds to redoing the whole work form the beginning. We can now calculate the expected cost given a disaster date $D$ and a list of backups $\{B_i\}$:
+		$$
+		S_{E}=\displaystyle \sum_{k=0}^{n}\left(\left(\displaystyle \prod_{i=0}^{k} p_i\right).(1-p_{k+1})\left((D-d_{k+1}).w+\displaystyle \sum_{l=1}^{k+1} r_l\right)\right)
+		$$
+		Here we have $p_i = p_{B_i},\ r_i = r_{B_i},\ d_i = d_{B_i}$ and $p_0 = 1$.	
+		We can further extend the model by assigning different probabilities of attack to different days of the week, as criminals often prefer to operate in nonactive times for the victims.
 \section{Results}
 	We have explored how the sample size affects the expected error between the statistical and experimental data and have explored how backups affect expected revenue. The model mainly focuses on optimizing the ransom prize, but the author truly believes that in order for us to be able to take countermeasures against ransomware attacks, we need to understand their every move. Putting ourselves in their shoes is essential to the purpose. Additional results, such as the distribution of expected revenue with respect to backup percentages, can help us to draw conclusions how to counteract.
 \section{Further development}
