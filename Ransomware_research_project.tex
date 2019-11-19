@@ -20,13 +20,13 @@
 \usepackage{breqn}
 \usepackage{setspace}
 \usepackage{hyperref}
+\usepackage{mathtools}
 \usepackage {tikz}
 	\usetikzlibrary {positioning}
 	\usetikzlibrary{shapes.geometric}
 \graphicspath{
 	{Graphics/}
 }
-
 \newtheorem{theorem}{Theorem}
 
 \newtheorem{lemma}{Lemma}
@@ -111,13 +111,14 @@
 			\emph{The error function} is encountered in integrating the normal distribution, it takes z-score as a parameter and calculates the integral between a fixed point and the mean of the distribution
 			$$\operatorname{erf}(z)=\dfrac{2}{\sqrt{\pi}}\int_{0}^{z}e^{-t^{2}}dt.$$
 		\end{definition}
+		\newpage
 		\begin{definition}
 			\label{def:Bernoulli_trial}
 			\emph{A Bernoulli trial} is a random experiment with two outcomes and fixed probability of failure and therefore success:
-			\begin{align}
-			&P(\text{success})=p\\
-			&P(\text{failure})=1-p.
-			\end{align}
+			\begin{center}
+			$P(\text{success})=p$\\
+			$P(\text{failure})=1-p.$
+			\end{center}
 		\end{definition}
 	
 		\begin{definition}
@@ -237,26 +238,30 @@
 		$$
 		S=\Delta t.w + R,
 		$$
-		where with $\Delta t$ we denote the difference in days between the successful backup and the disaster date and with $R$ the total cost of trying to recover backups(part of which is r). In case none of the backups are successful, we will assign a total value of $T$, which corresponds to redoing the whole work from the beginning.\par
+		In case none of the backups are successful, we will assign a value of $S_T$, corresponding to redoing the whole work from the beginning.\par
 		\subsection{Full backups only}
-		When we only consider a set of full backups, the model is simply a Bernoulli distribution with finite trials, namely the number of full backups. We stop when we find a successful backup, starting from the latest and going to the last. Let the time between two consecutive full backups be a constant $t_f$ and This gives us expected backup cost:
+		When we only consider a set of full backups, the model is simply a Bernoulli distribution with finite trials, namely the number of full backups. We stop when we find a successful backup, starting from the latest and going to the last. We denote with $p_f$ the fail probability for a full backup and with $r_f$ the recovery try price for a full backup. Let the time in days between two consecutive full backups be a constant $t_f$ and the difference in days from the first backup to the disaster date be $T$. Let $k$ be the number of full backups made before the disaster date. Then:
+		$$
+			k = \left \lfloor{\frac{T}{t_f}}\right \rfloor
+		$$
+		We can now define the expected backup cost:
 		\begin{equation}
-			\displaystyle \sum_{i=0}^{n}(1-p_f).p_f^{i}\left((\delta t + T.i) + (i+1).r_f\right)
+			E = p_f^{i}\left(S_T + k.r_f\right) + \displaystyle \sum_{i=0}^{k-1} (1-p_f).p_f^{i}\left( \left(\left\{ \frac{T}{t_f}\right \} + t_f.i\right).w + (i+1).r_f \right )
 		\end{equation}
-		\subsection{Only one full backup}
+		This calculation is essential as incremental backups can only work when there is a working full backup and therefore the first thing we need to do is find the latest one. We can now move on to considering the incremental backups given a working full backup.
+		\subsection{Incremental backups with a working full backup}
 		\begin{tikzpicture}
 		[every node/.style={inner sep=0pt}]
 		\node (1) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (50.0pt, -130pt)  {};
 		\node (2) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (135pt, -130pt)  {};
 		\node (3) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (220pt, -130pt)  {};
 		\node (4) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (305pt, -130pt)  {};
-		\node (5) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (385pt, -130pt)  {};
+		\node (5) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (390pt, -130pt)  {};
 		\draw [line width=0.625, ->, >=latex, color=black] (1) to  (2);
 		\draw [line width=0.625, ->, >=latex, color=black] (2) to  (3);
 		\draw [line width=0.625, ->, >=latex, color=black] (3) to  (4);
 		\draw [line width=0.625, ->, >=latex, color=black] (4) to  (5);
-		\end{tikzpicture}
-			
+		\end{tikzpicture}					
 \section{Results}
 	We have explored how the sample size affects the expected error between the statistical and experimental data and have explored how backups affect expected revenue. The model mainly focuses on optimizing the ransom prize, but the author truly believes that in order for us to be able to take countermeasures against ransomware attacks, we need to understand their every move. Putting ourselves in their shoes is essential to the purpose. Additional results, such as the distribution of expected revenue with respect to backup percentages, can help us to draw conclusions how to counteract.
 \section{Further development}
