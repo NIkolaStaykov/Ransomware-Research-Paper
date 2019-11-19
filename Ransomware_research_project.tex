@@ -43,19 +43,19 @@
 \begin{titlepage}
 	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 	\centering
-	\textsc{\LARGE SRS 2019}\\[1cm]
+	\textsc{\LARGE Innofair 2019}\\[1cm]
 	\HRule\\[1 cm]
-	
 	{\huge\bfseries Ransomware Research Project }\\[0.5 cm] 
 	\HRule\\
-    \vfill
+			\vfill
 			\Large
 			\textit{Author:}
-			 \textsc{Nikola Staykov}\\
-             \vspace{2cm}
+			\textsc{Nikola Staykov}\\
+            \vspace{2cm}
 			\Large
 			\textit{Supervisor:}
-            \textsc{Yavor Papazov}
+            \textsc{Yavor Papazov}\\
+            \includegraphics[width=0.5\textwidth]{Innofair_logo}\\
     \vfill	
 	{\large\today}   
 	\vfill
@@ -223,11 +223,11 @@
 		Two types of backup will be considered:
 		\begin{enumerate}
 			\item Full backup- a backup of the whole database
-			\item Incremental backup- it only saves the changes from the last backup
+			\item Incremental backup- only saves the changes from the last backup
 		\end{enumerate}
 		The backups from a certain type share common probability of failure and price for a recovery try.\par
 		In order for an incremental backup to be successful, all the incremental backups which precede it up to a full backup need to be successful as well as the full backup itself.\par
-		In this case data value should clearly be taken into account from a subjective point of view. Even though on the market some data may not be worth a lot, if it is essential for the functioning of a given company, it is clear that it will be willing to pay a lot to regain access to it immediately. Therefore, in the described model data value is considered as an ever-increasing amount, for the purposes of the research the "work rate" of the company is taken as a constant. We will denote it with $w$.\par
+		In this case data value should clearly be taken into account from a subjective point of view. Even though on the market some data may not be worth a lot, if it is essential for the functioning of a given company, it is clear that it will be willing to pay a lot to regain access to it immediately. Therefore, in the described model data value is considered as an ever-increasing amount, for the purposes of the research the "work rate", namely the data value generated in a day, of the company is taken as a constant. We will denote it with $w$.\par
 		The cost of a backup recovery will be considered as a sum of two factors:
 		\begin{itemize}
 			\item The cost of redoing the lost work, denoted with W
@@ -237,16 +237,13 @@
 		$$
 		S=\Delta t.w + R,
 		$$
-		where with $\Delta t$ we denote the difference in days between the successful backup and the disaster date and with $R$ the total cost of trying to recover backups(part of which is r). In case none of the backups are successful, we will assign a total value of $T$, which corresponds to redoing the whole work form the beginning.\par
-		We can now calculate the expected cost given a disaster date $D$ and a list of backups $\{B_i\}$:
-		$$
-		S_{E}=\displaystyle \sum_{k=0}^{n}\left(\left(\displaystyle \prod_{i=0}^{k} p_i\right).(1-p_{k+1})\left((D-d_{k+1}).w+\displaystyle \sum_{l=1}^{k+1} r_l\right)\right)
-		$$
-		Here we have $p_i = p_{B_i},\ r_i = r_{B_i},\ d_i = d_{B_i}$ and $p_0 = 1$.	
-		We can further extend the model by assigning different probabilities of attack to different days of the week, as criminals often prefer to operate in nonactive times for the victims.
+		where with $\Delta t$ we denote the difference in days between the successful backup and the disaster date and with $R$ the total cost of trying to recover backups(part of which is r). In case none of the backups are successful, we will assign a total value of $T$, which corresponds to redoing the whole work from the beginning.\par
 		\subsection{Full backups only}
-		When we only consider a set of full backups, the model is simply a Bernoulli distribution with finite trials, namely the number of full backups. This gives us expected \par
-		\section{Only one full backup}
+		When we only consider a set of full backups, the model is simply a Bernoulli distribution with finite trials, namely the number of full backups. We stop when we find a successful backup, starting from the latest and going to the last. Let the time between two consecutive full backups be a constant $t_f$ and This gives us expected backup cost:
+		\begin{equation}
+			\displaystyle \sum_{i=0}^{n}(1-p_f).p_f^{i}\left((\delta t + T.i) + (i+1).r_f\right)
+		\end{equation}
+		\subsection{Only one full backup}
 		\begin{tikzpicture}
 		[every node/.style={inner sep=0pt}]
 		\node (1) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (50.0pt, -130pt)  {};
