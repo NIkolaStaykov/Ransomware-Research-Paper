@@ -22,7 +22,7 @@
 \usepackage{hyperref}
 \usepackage {tikz}
 	\usetikzlibrary {positioning}
-	
+	\usetikzlibrary{shapes.geometric}
 \graphicspath{
 	{Graphics/}
 }
@@ -110,6 +110,23 @@
 			\label{def:err}
 			\emph{The error function} is encountered in integrating the normal distribution, it takes z-score as a parameter and calculates the integral between a fixed point and the mean of the distribution
 			$$\operatorname{erf}(z)=\dfrac{2}{\sqrt{\pi}}\int_{0}^{z}e^{-t^{2}}dt.$$
+		\end{definition}
+		\begin{definition}
+			\label{def:Bernoulli_trial}
+			\emph{A Bernoulli trial} is a random experiment with two outcomes and fixed probability of failure and therefore success:
+			\begin{align}
+			&P(\text{success})=p\\
+			&P(\text{failure})=1-p.
+			\end{align}
+		\end{definition}
+	
+		\begin{definition}
+			\label{def:Binomial_distribution}
+			\emph{A binomial distribution} is the statistical distribution of outcomes(success/failure) when conducting a number of independent Bernoulli trials.
+			For $n$ trials and success probability $p$ the probability that exactly $k$ of them are successful is:
+			$$
+			P(\text{success} = k) = \frac{\binom{n}{k}p^{k}(1-p)^{n-k}}{2^k}
+			$$
 		\end{definition}
 	
 	\section{Approach}
@@ -202,18 +219,47 @@
 			r \text{: the price of trying to recover the data from the given backup}
 		\end{cases}
 		$$
-		In this case data value should clearly be taken into account from a subjective point of view. Even though on the market some data may not be worth a lot, if it is essential for the functioning of a given company, it is clear that it will be willing to pay a lot to regain access to it immediately. Therefore, in the described model data value is considered an ever-increasing amount, for the purposes of the research the "work rate" of the company is taken as a constant. We will denote it with $w$\par 	
-		Given a disaster date (on which the attack occurs) a successful backup, we can calculate the cost of the recovery in the following way:
+		
+		Two types of backup will be considered:
+		\begin{enumerate}
+			\item Full backup- a backup of the whole database
+			\item Incremental backup- it only saves the changes from the last backup
+		\end{enumerate}
+		The backups from a certain type share common probability of failure and price for a recovery try.\par
+		In order for an incremental backup to be successful, all the incremental backups which precede it up to a full backup need to be successful as well as the full backup itself.\par
+		In this case data value should clearly be taken into account from a subjective point of view. Even though on the market some data may not be worth a lot, if it is essential for the functioning of a given company, it is clear that it will be willing to pay a lot to regain access to it immediately. Therefore, in the described model data value is considered as an ever-increasing amount, for the purposes of the research the "work rate" of the company is taken as a constant. We will denote it with $w$.\par
+		The cost of a backup recovery will be considered as a sum of two factors:
+		\begin{itemize}
+			\item The cost of redoing the lost work, denoted with W
+			\item The cost of the recovery process itself, denoted with R
+		\end{itemize}.
+		We define $W = \Delta t.w$, where with $\Delta t$ we denote the difference in days between the successful backup and the disaster date and $R = \sum_{i=1}^{n} r_i$, where the number of attempted backups is $n$ and 
 		$$
-		S=\Delta t.w + r,
+		S=\Delta t.w + R,
 		$$
-		where with $\Delta t$ we denote the difference in days between the successful backup and the disaster date.\par
-		In case none of the backups is successful, we will assign a total value of $T$, which corresponds to redoing the whole work form the beginning. We can now calculate the expected cost given a disaster date $D$ and a list of backups $\{B_i\}$:
+		where with $\Delta t$ we denote the difference in days between the successful backup and the disaster date and with $R$ the total cost of trying to recover backups(part of which is r). In case none of the backups are successful, we will assign a total value of $T$, which corresponds to redoing the whole work form the beginning.\par
+		We can now calculate the expected cost given a disaster date $D$ and a list of backups $\{B_i\}$:
 		$$
 		S_{E}=\displaystyle \sum_{k=0}^{n}\left(\left(\displaystyle \prod_{i=0}^{k} p_i\right).(1-p_{k+1})\left((D-d_{k+1}).w+\displaystyle \sum_{l=1}^{k+1} r_l\right)\right)
 		$$
 		Here we have $p_i = p_{B_i},\ r_i = r_{B_i},\ d_i = d_{B_i}$ and $p_0 = 1$.	
 		We can further extend the model by assigning different probabilities of attack to different days of the week, as criminals often prefer to operate in nonactive times for the victims.
+		\subsection{Full backups only}
+		When we only consider a set of full backups, the model is simply a Bernoulli distribution with finite trials, namely the number of full backups. This gives us expected \par
+		\section{Only one full backup}
+		\begin{tikzpicture}
+		[every node/.style={inner sep=0pt}]
+		\node (1) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (50.0pt, -130pt)  {};
+		\node (2) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (135pt, -130pt)  {};
+		\node (3) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (220pt, -130pt)  {};
+		\node (4) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (305pt, -130pt)  {};
+		\node (5) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (385pt, -130pt)  {};
+		\draw [line width=0.625, ->, >=latex, color=black] (1) to  (2);
+		\draw [line width=0.625, ->, >=latex, color=black] (2) to  (3);
+		\draw [line width=0.625, ->, >=latex, color=black] (3) to  (4);
+		\draw [line width=0.625, ->, >=latex, color=black] (4) to  (5);
+		\end{tikzpicture}
+			
 \section{Results}
 	We have explored how the sample size affects the expected error between the statistical and experimental data and have explored how backups affect expected revenue. The model mainly focuses on optimizing the ransom prize, but the author truly believes that in order for us to be able to take countermeasures against ransomware attacks, we need to understand their every move. Putting ourselves in their shoes is essential to the purpose. Additional results, such as the distribution of expected revenue with respect to backup percentages, can help us to draw conclusions how to counteract.
 \section{Further development}
