@@ -292,11 +292,22 @@
 		$$
 		\footnotetext{We can only try to recover incremental backups preceding the next full backup}
 		Note that the last full backup being successful is equivalent to $T_F<t_F$.\par
-		Now we are in the exact opposite situation with respect to the previous subsection. We try until we reach a failed attempt to recover the data from an incremental backup, as it this will mean none of the following backups can be used either. We will consider that we are reducing $W$ since in the initial position we are willing to redo the work up to the working full backup. That being said, we are ready to calculate the expected reduction in the price:
+		Now we are in the exact opposite situation with respect to the previous subsection. We try until we reach a failed attempt to recover the data from an incremental backup, as it this will mean none of the following backups can be used either. We will consider that we are reducing $W$ since in the initial position we are willing to redo the work up to the working full backup. That being said, we are ready to calculate the expected price:
 		\begin{equation}
 		\label{eq:2}
-			(1-p)^l.(-t_I.l.)\displaystyle \sum_{i=0}^{l-1} (1-p_I)^{i}.p(-t_I.l.w + r_I.(i+1))
+			f(l) = (1-p)^l.((t_F-t_I.l).w + r_I.l) + \displaystyle \sum_{i=0}^{l-1} (1-p_I)^{i}.p(T_F-t_I.l.w + r_I.(i+1))
 		\end{equation}
+		Now we know how much the price will decrease when we use incremental backups and can build the whole picture using equations \ref{eq:1} and \ref{eq:2}.
+		\subsection{Overall expected price}
+		For each summand in \ref{eq:1} we should add the effect of incremental backups, so we get new summands of the type:
+		$$
+		P.(W + R),
+		$$
+		where $P$ is the probability of a certain combination of events occurring, $W$ is the cost of the data that has to be reworked and $R$ is the cost of the recovery process. Incremental backups lower the cost of the data that has to be reworked but make $R$ bigger. As mentioned before, there is only one case when the number of incremental backups we have to consider is different and it corresponds to the first full backup being successful. We set $l = $By combining the the two equations \ref{eq:1} and \ref{eq:2} we get:
+		\begin{equation}\label{eq:3}
+			F(T) = 
+		\end{equation}
+		
 \section{Results}
 	We have explored how the sample size affects the expected error between the statistical and experimental data and have explored how backups affect expected revenue. The model mainly focuses on optimizing the ransom prize, but the author truly believes that in order for us to be able to take countermeasures against ransomware attacks, we need to understand their every move. Putting ourselves in their shoes is essential to the purpose. Additional results, such as the distribution of expected revenue with respect to backup percentages, can help us draw conclusions how to counteract.
 \section{Further development}
