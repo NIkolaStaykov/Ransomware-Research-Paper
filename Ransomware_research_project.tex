@@ -238,7 +238,7 @@
 		$$
 		S=\Delta t.w + R,
 		$$
-		Let the difference in days from the first backup to the disaster date be $T$. In case none of the backups are successful, we consider a variable $S_T$, corresponding to the price of redoing the whole work the company has done from the beginning. It is clear that $S_T>T.w$\par
+		Let the difference in days from the first backup to the disaster date be $T$. In case none of the backups are successful, we consider a variable $W_T$, corresponding to the price of redoing the whole work the company has done from the beginning. It is clear that $W_T>T.w$\par
 		\subsection{Full backups only}
 		When we only consider a set of full backups, the model is simply a Bernoulli distribution with finite trials, namely the number of full backups. We stop when we find a successful backup, starting from the latest and going to the last. Let us define the properties of a full backup($B_F$):
 		$$
@@ -256,7 +256,7 @@
 		We can now define the expected backup cost:
 		\begin{equation}
 		\label{eq:1}
-			E(T) = p_F^{k}\left(S_T + k.r_F\right) + \displaystyle \sum_{i=0}^{k-1} (1-p_F).p_F^{i}\left( \left(\left\{ \frac{T}{t_F}\right \} + t_F.i\right).w + (i+1).r_F \right )
+			E(T) = p_F^{k}\left(W_T + k.r_F\right) + \displaystyle \sum_{i=0}^{k-1} (1-p_F).p_F^{i}\left( \left (\left\{ \frac{T}{t_F}\right \} + i\right)t_F.w + (i+1).r_F \right )
 		\end{equation}
 		This calculation is essential as incremental backups can only work when there is a working full backup and therefore the first thing we need to do is find the latest one. We can now move on to considering the incremental backups given a working full backup.
 		\subsection{Incremental backups with a working full backup}
@@ -286,8 +286,8 @@
 		$$
 			l=
 			\begin{cases}
-				\left\lfloor \frac{T_F}{t_I}\right \rfloor \text{, if the last full backup is successful}\\
-				\left\lfloor \frac{t_F}{t_I}\right \rfloor -1 \text{, if the last full backup is not successful}\footnotemark\\
+				\left\lfloor \frac{T_F}{t_I}\right \rfloor \text{, if } T_F<t_F\\
+				\left\lfloor \frac{t_F}{t_I}\right \rfloor -1 \text{, if } T_F>t_F\footnotemark\\
 			\end{cases}
 		$$
 		\footnotetext{We can only try to recover incremental backups preceding the next full backup}
@@ -295,17 +295,21 @@
 		Now we are in the exact opposite situation with respect to the previous subsection. We try until we reach a failed attempt to recover the data from an incremental backup, as it this will mean none of the following backups can be used either. We will consider that we are reducing $W$ since in the initial position we are willing to redo the work up to the working full backup. That being said, we are ready to calculate the expected price:
 		\begin{equation}
 		\label{eq:2}
-			f(l) = (1-p)^l.((t_F-t_I.l).w + r_I.l) + \displaystyle \sum_{i=0}^{l-1} (1-p_I)^{i}.p(T_F-t_I.l.w + r_I.(i+1))
+			f(T_F) = (1-p_I)^l.((t_F-t_I.l).w + r_I.l) + \displaystyle \sum_{i=0}^{l-1} (1-p_I)^{i}.p((T_F-t_I.l)w + r_I.(i+1))
 		\end{equation}
 		Now we know how much the price will decrease when we use incremental backups and can build the whole picture using equations \ref{eq:1} and \ref{eq:2}.
 		\subsection{Overall expected price}
 		For each summand in \ref{eq:1} we should add the effect of incremental backups, so we get new summands of the type:
 		$$
-		P.(W + R),
+		P(W + R),
 		$$
-		where $P$ is the probability of a certain combination of events occurring, $W$ is the cost of the data that has to be reworked and $R$ is the cost of the recovery process. Incremental backups lower the cost of the data that has to be reworked but make $R$ bigger. As mentioned before, there is only one case when the number of incremental backups we have to consider is different and it corresponds to the first full backup being successful. We set $l = $By combining the the two equations \ref{eq:1} and \ref{eq:2} we get:
+		where $P$ is the probability of a certain combination of events occurring, $W$ is the cost of the data that has to be reworked and $R$ is the cost of the recovery process. Incremental backups lower the cost of the data that has to be reworked but make $R$ bigger. As mentioned before, there is only one case when the number of incremental backups we have to consider is different and it corresponds to the first full backup being successful. If the $i$-th full backup is successful\footnote{This corresponds to the $i-1$-th summand in the sum from equation \ref{eq:3}}:
+		$$
+		T_F=t_F\left(\left\{ \frac{T}{t_F} \right\} + i - 1\right)
+		$$
+		By combining equations \ref{eq:1} and \ref{eq:2} we get:
 		\begin{equation}\label{eq:3}
-			F(T) = 
+			F(T) = p_F^{k}(W_T+k.r_F) + \displaystyle\sum_{i=0}^{k-1}(1-p_F).p_F^{i}\left(f(T_F) + i.r_F\right)
 		\end{equation}
 		
 \section{Results}
