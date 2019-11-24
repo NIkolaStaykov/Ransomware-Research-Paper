@@ -26,6 +26,7 @@
 	\usetikzlibrary{shapes.geometric}
 \graphicspath{
 	{Graphics/}
+	{Graphics/BackupFunction/}
 }
 \newtheorem{theorem}{Theorem}
 
@@ -38,6 +39,13 @@
 
 \setlength{\columnsep}{1cm}
 \setlength{\parindent}{1em}
+
+\newcommand\blfootnote[1]{%
+	\begingroup
+	\renewcommand\thefootnote{}\footnote{#1}%
+	\addtocounter{footnote}{-1}%
+	\endgroup
+}
 
 \begin{document}
 \begin{titlepage}
@@ -64,16 +72,11 @@
 \tableofcontents
 \newpage
 \begin{abstract}
-		Ransomware is a type of computer virus, which encrypts the files on a given system and asks for a ransom in order for them to be decrypted. Ransomware authors have no way of knowing their victim's data value, or more precisely what people \textit{think} their data costs. They can, however, make small surveys before launching the main campaign, in order to estimate the aforementioned distribution. This paper explores a model in order to find the most suitable parameters for such a survey. This approach is key to finding the best price for the ransom.
+		Ransomware is a type of computer virus, which encrypts the files on a given system and asks for a ransom in order for them to be decrypted. Ransomware authors have no way of knowing their victim's data value, or more precisely what people \textit{think} their data costs. They can, however, make small surveys before launching the main campaign, in order to estimate the aforementioned distribution. This paper explores a model in order to find the most suitable parameters for such a survey. This approach is key to finding the best price for the ransom. By considering the strategies of the attackers, we can optimize our own backup strategy to counteract. This is taken into account in the second section.
 \end{abstract}
 
 \section{Introduction}
-		Ransomware first appeared in 1989 in the form of the AIDS Troyan, aka PC Cyborg.  The AIDS Trojan was pretty easy to overcome as it used simple symmetric cryptography and tools were soon available to decrypt the files, but this case set the ground for a lot of the modern threats. With the coming of the Internet age, ransomware returned with new power, namely with the Archiveus Trojan and GPcode from 2006. Another turning point in the history of ransomware was the invention of bitcoin, and crypto-currencies as a whole, for several reasons, a few of them being anonymity, the transactions are fully automatable and the transactions are irrefutable\cite{huang2018tracking}.\par
-		In the recent years there have been some attempts to model the ransomware market. In \cite{caulfielddynamic}, the authors have created a theoretical model, taking into consideration the number of users, who have backups, as well as other factors such as information spread and reliability of the ransomware.\par                 
-		In \cite{cartwright2018pay} a different approach has been explored, considering the possibility for bargaining and respectively a game between the victim and the criminals. This paper focuses on game theory and combinatorics.\par
-		There has also been considerable amount of effort dedicated to tracking the ransomware payments in the blockchain, as all of them are public. As a result, there is a public data record of such payments, provided by \cite{paquet2019ransomware} and in \cite{thomas2015framing} many one can observe many data-based conclusions not only concerning ransomware, but also the whole black market.\par
-		In this paper, the model is based on the one described in \cite{caulfielddynamic}, but focuses on optimizing different parameters, unexplored in the aforementioned research. 
-\newpage
+	This project is structured in two main parts, considering respectively models for ransom optimization and backup optimization. By thoroughly examining both viewpoints in a situation, a full picture of the strategies of both the attackers and the victims has been created. Considering ways they can optimize their profit gives us insight on how to counteract such malicious behavior in order to reduce the effect of ransomware attacks.
 	\section{Preliminaries}
 	In this section are stated all the needed definitions and concepts one needs to fully understand the paper.
 		\begin{definition}
@@ -111,7 +114,7 @@
 			\emph{The error function} is encountered in integrating the normal distribution, it takes z-score as a parameter and calculates the integral between a fixed point and the mean of the distribution
 			$$\operatorname{erf}(z)=\dfrac{2}{\sqrt{\pi}}\int_{0}^{z}e^{-t^{2}}dt.$$
 		\end{definition}
-		\newpage
+	
 		\begin{definition}
 			\label{def:Bernoulli_trial}
 			\emph{A Bernoulli trial} is a random experiment with two outcomes and fixed probability of failure and therefore success:
@@ -130,6 +133,12 @@
 			$$
 		\end{definition}
 	\section{Ransom optimization}
+		\subsection{Introduction}
+			Ransomware first appeared in 1989 in the form of the AIDS Troyan, aka PC Cyborg.  The AIDS Trojan was pretty easy to overcome as it used simple symmetric cryptography and tools were soon available to decrypt the files, but this case set the ground for a lot of the modern threats. With the coming of the Internet age, ransomware returned with new power, namely with the Archiveus Trojan and GPcode from 2006. Another turning point in the history of ransomware was the invention of bitcoin, and crypto-currencies as a whole, for several reasons, a few of them being anonymity, the transactions are fully automatable and the transactions are irrefutable\cite{huang2018tracking}.\par
+			In the recent years there have been some attempts to model the ransomware market. In \cite{caulfielddynamic}, the authors have created a theoretical model, taking into consideration the number of users, who have backups, as well as other factors such as information spread and reliability of the ransomware.\par                 
+			In \cite{cartwright2018pay} a different approach has been explored, considering the possibility for bargaining and respectively a game between the victim and the criminals. This paper focuses on game theory and combinatorics.\par
+			There has also been considerable amount of effort dedicated to tracking the ransomware payments in the blockchain, as all of them are public. As a result, there is a public data record of such payments, provided by \cite{paquet2019ransomware} and in \cite{thomas2015framing} many one can observe many data-based conclusions not only concerning ransomware, but also the whole black market.\par
+			In this paper, the model is based on the one described in \cite{caulfielddynamic}, but focuses on optimizing different parameters, unexplored in the aforementioned research.
 		\subsection{Approach}
 			This model describes the spreading of a ransomware virus. It calculates the optimal ransom for a ransomware attack, distributed exclusively via botnets, without the key component of spreading to every computer in the network. This variant of the attack is relatively cheap to initiate, but has low efficiency.	We treat the act of decrypting the data of a given computer as a service and the ransom as the service price, respectively. \par
 			Consider the distribution of the willingness to pay (WTP) of a given target group. This is the maximum price someone would pay for their data. By putting ourselves in the place of the ransomware authors, we try to find what the distribution is by examining samples of people and how they respond to a given price. This tests, however, cost us valuable time since the awareness of people rises constantly. We strive to determine how many and how big tests should we conduct in order to model the distribution with reasonable error and in the same time not lose too much time?\par
@@ -207,8 +216,12 @@
 			\begin{center}
 				\includegraphics[width=0.55\textwidth]{Revenue_vs_backup}
 			\end{center}
-\section{Optimizing backups}
-	When it comes to protection from ransomware, the most efficient method is building backups. This, however, has to be done regularly, as the effects after a potential attack will otherwise be insignificant. That is why it is important for backup protocols to be carefully build, considering both the risks of being attacked and the resources needed for the job. Furthermore, optimizing the backups can simultaneously increase the security level and save money.
+		\subsection{Results}
+		We have explored how the sample size affects the expected error between the statistical and experimental data and have explored how backups affect expected revenue. The model mainly focuses on optimizing the ransom prize, but the author truly believes that in order for us to be able to take countermeasures against ransomware attacks, we need to understand their every move. Putting ourselves in their shoes is essential to the purpose. Additional results, such as the distribution of expected revenue with respect to backup percentages, can help us draw conclusions how to counteract.
+\section{Backup optimization}
+	\subsection{Introduction}
+		When it comes to protection from ransomware, the most efficient method is building backups. This, however, has to be done regularly, as the effects after a potential attack will otherwise be insignificant. That is why it is important for backup protocols to be carefully build, considering both the risks of being attacked and the resources needed for the job. Furthermore, optimizing the backups can simultaneously increase the security level and save money.\par
+		In this section, a model for backing up data is considered in order to calculate the expected price. Such models, considering two options for backups: full and incremental, have been constructed and researched in the past\cite{nakamura2003optimal}\cite{qian2010optimal}. We consider a cycle of backups, which repeats over between any two full backups and study how the intervals affect the expected price and how fast the effect of initial data, accumulated before the initial full backup, vanishes over time.
 	\subsection{Theoretical setting}
 		The idea behind the described model is to calculate and optimize the expected price of the recovery in case of an attack.\par
 		We will consider a backup as a structure, containing the following properties:
@@ -282,7 +295,8 @@
 			t_I: \text{the days between two consecutive incremental backups}\\
 		\end{cases}
 		$$
-		Now let $T_F$ denote the difference in days between the disaster date and the successful full backup and $l$ denote the number of incremental backups we have to consider. We have two options for $l$ depending on whether the latest full backup was successful:
+\newpage
+		Let $T_F$ denote the difference in days between the disaster date and the successful full backup and $l$ denote the number of incremental backups we have to consider. We have two options for $l$ depending on whether the latest full backup was successful:
 		$$
 			l=
 			\begin{cases}
@@ -292,10 +306,10 @@
 		$$
 		\footnotetext{We can only try to recover incremental backups preceding the next full backup}
 		Note that the last full backup being successful is equivalent to $T_F<t_F$.\par
-		Now we are in the exact opposite situation with respect to the previous subsection. We try until we reach a failed attempt to recover the data from an incremental backup, as it this will mean none of the following backups can be used either. We will consider that we are reducing $W$ since in the initial position we are willing to redo the work up to the working full backup. That being said, we are ready to calculate the expected price:
+		We are in the exact opposite situation with respect to the previous subsection. The process of recovering incremental backups continues until we conduct an unsuccessful attempt to recover the data, as this will mean none of the following backups can be used either. Note that we are reducing $W$ since in the initial position we are willing to redo the work up to the working full backup. That being said, we are ready to calculate the expected price:
 		\begin{equation}
 		\label{eq:2}
-			f(T_F) = (1-p_I)^l.((t_F-t_I.l).w + r_I.l) + \displaystyle \sum_{i=0}^{l-1} (1-p_I)^{i}.p_I((T_F-t_I.i)w + r_I.(i+1))
+			f(T_F) = (1-p_I)^l.((T_F-t_I.l).w + r_I.l) + \displaystyle \sum_{i=0}^{l-1} (1-p_I)^{i}.p_I((T_F-t_I.i)w + r_I.(i+1))
 		\end{equation}
 		Now we know how much the price will decrease when we use incremental backups and can build the whole picture using equations \ref{eq:1} and \ref{eq:2}.
 		\subsection{Overall expected price}
@@ -309,21 +323,39 @@
 		$$
 		By combining equations \ref{eq:1} and \ref{eq:2} we get:
 		\begin{equation}\label{eq:3}
-			F(T) = p_F^{k}(W_T+k.r_F) + \displaystyle\sum_{i=0}^{k-1}(1-p_F).p_F^{i}\left(f(T_F) + i.r_F\right)
+			F(T) = p_F^{k}(W_T+k.r_F) + \displaystyle\sum_{i=0}^{k-1}(1-p_F).p_F^{i}\left(f(T_F) + (i+1).r_F\right)
 		\end{equation}
-		
-\section{Results}
-	We have explored how the sample size affects the expected error between the statistical and experimental data and have explored how backups affect expected revenue. The model mainly focuses on optimizing the ransom prize, but the author truly believes that in order for us to be able to take countermeasures against ransomware attacks, we need to understand their every move. Putting ourselves in their shoes is essential to the purpose. Additional results, such as the distribution of expected revenue with respect to backup percentages, can help us draw conclusions how to counteract.
+		Using the described equations \ref{eq:1} and \ref{eq:3}, we can construct a graph of the expected price with and without incremental backups included.
+		\begin{figure}[H]
+			\begin{minipage}{1.0\textwidth}
+				\centering
+				\includegraphics[width=0.7\textwidth]{"Weekly_full"}
+				\caption{Full only and Whole model}\label{Fig:FullWeekly}
+			\end{minipage}
+		\end{figure}
+		\subsection{Monte Carlo simulation}
+			A Monte Carlo simulation has been build with python to generate random recovery processes with the described conditions of backup structure. The price of the recovery has been graphed with respect to the disaster date:
+			\begin{figure}[H]
+				\begin{minipage}{1.0\textwidth}
+					\centering
+					\includegraphics[width=0.7\textwidth]{"Weekly_full_carlo"}
+					\caption{Sample size vs Error}\label{Fig:MonteCarlo}
+				\end{minipage}
+			\end{figure}
+		\blfootnote{In both Figure \ref{Fig:FullWeekly} and Figure \ref{Fig:MonteCarlo} the data showed is for a weekly full and daily incremental backups}
+		The colors in Figure \ref{Fig:MonteCarlo} represent the type of the last backup, which was successful during the recovery, full, incremental or non-existing.
+		\subsection{Results}
+			A model for backing up data has been built to calculate the expected price of backup recovery. Furthermore, the effect of incremental backups has been shown, as opposed to a strategy using only full backups. A Monte Carlo simulation has been built and analyzed to demonstrate the real process of recovery.
 \section{Further development}
 	The author considers several future development directions for the project, namely:
 	\begin{itemize}
-		\item considering the use of backups and its influence on the WTP distribution
-		\item expanding the model to describe more complex way of distributing the ransomware
+		\item considering non-constant work rate for the backup model
+		\item expanding the ransomware model to describe more complex way of distributing the ransomware
 		\item using the results and databases of related studies in order to back the project with real data\cite{paquet2019ransomware}
-		\item considering a dynamic pricing model
+		\item considering a dynamic pricing model for the ransomware model
 	\end{itemize}
 \section{Acknowledgments}
-I want to thank my mentor, Yavor Papazov, and Konstantin Delchev for the enormous help with the choice of the research subject and for providing me with all the necessary material to get familiar with the topic, as well as listening to my questions along the whole way. I extend my gratitude towards Victor Velev, Victor Kolev and Stefan Hadzhistoikov for the support I got from them when I needed it the most. I also want to thank Stanislav Harizanov for the professional expertise.
+I want to thank my mentor, Yavor Papazov, and Konstantin Delchev for the enormous help with the choice of the research subject and for providing me with all the necessary material to get familiar with the topic, as well as listening to my questions along the whole way. I extend my gratitude towards HSSIMI and SRS for the opportunity to develop this project and the irreplaceable atmosphere of dedication and I also want to thank Stanislav Harizanov for the professional expertise.
 \bibliographystyle{unsrt}
 \nocite{*}
 \bibliography{Bibliography}
