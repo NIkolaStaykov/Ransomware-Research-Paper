@@ -193,30 +193,30 @@
 					\caption{Тестов размер и грешка}\label{Fig:Data5}
 				\end{minipage}
 				\end{figure}
-			\subsubsection{Архивираща функция}
-				В тази секция описваме функция, отговаряща за вероятността за присъствието на архив. Изчислен е ефектът и върху очакваната печалба.\par
-				Първо нека дефинираме архивния итератора $b$: 
-				$$
-				b=
-				\begin{cases}
-					1 \text{ ако жертвата има архив},\\
-					0 \text{ ако жертвата няма архив}
-				\end{cases}
-				$$
-				Сега нека дефинираме желанието за плащане (ЖЗП):
-				$$
-				P(x)=
-				\begin{cases}
-				d_{x} \text{ ако } b_{i}=0,\\
-				c \text{ ако } b_{i}=1
-				\end{cases}
-				$$
-				Тук цената на архив е означена с $c$, а цената на данните на жертвата- с $d_{x}$.\par
-				Както и по-рано, изчисляваме очакваната вероятност даден човек да плати цена $x$.
-				Приемаме, че вероятността конкретна жертва да има архив е константа $p$ и изследваме как промяната на тази стойност влияе на очакваната печалба. Чрез събраните данни създаваме графика, която показва връзката между двете променливи. Измерената грешка е относителна.
-				\begin{center}
-					\includegraphics[width=0.55\textwidth]{Revenue_vs_backup}
-				\end{center}		
+			%\subsubsection{Архивираща функция}
+			%	В тази секция описваме функция, отговаряща за вероятността за присъствието на архив. Изчислен е ефектът и върху очакваната печалба.\par
+			%	Първо нека дефинираме архивния итератора $b$: 
+			%	$$
+			%	b=
+			%	\begin{cases}
+			%		1 \text{ ако жертвата има архив},\\
+			%		0 \text{ ако жертвата няма архив}
+			%	\end{cases}
+			%	$$
+			%	Сега нека дефинираме желанието за плащане (ЖЗП):
+			%	$$
+			%	P(x)=
+			%	\begin{cases}
+			%	d_{x} \text{ ако } b_{i}=0,\\
+			%	c \text{ ако } b_{i}=1
+			%	\end{cases}
+			%	$$
+			%	Тук цената на архив е означена с $c$, а цената на данните на жертвата- с $d_{x}$.\par
+			%	Както и по-рано, изчисляваме очакваната вероятност даден човек да плати цена $x$.
+			%	Приемаме, че вероятността конкретна жертва да има архив е константа $p$ и изследваме как промяната на тази стойност влияе на очакваната печалба. Чрез събраните данни създаваме графика, която показва връзката между двете променливи. Измерената грешка е относителна.
+			%	\begin{center}
+			%		\includegraphics[width=0.55\textwidth]{Revenue_vs_backup}
+			%	\end{center}		
 		\subsection{Резултати}
 			Изследвахме как размерът на тестовата група влияе на грешката на експерименталните данни и също как процента на защитените с архиви влияе на очакваната печалба. Моделът се фокусира на оптимизирането на цената на откупа, но авторът вярва, че за да можем да предприемем подходящи предпазни мерки срещу атаки от този вид, трябва да разбираме всеки ход на престъпниците. Поставяйки се на мястото на извършителите е ключово за целта. Допълнителни резултати, като връзката между очакваната печалба и броя на хората с архиви може да ни помогне да стигнем до подходящи подходи за справяне със заплахата.
 	\section{Оптимизиране на архивирането}
@@ -252,120 +252,112 @@
 			S=\Delta t.w + R,
 			$$
 			Нека разликата в дни между първият архив и датата на атаката е $T$. В случай, че никой от пълните архиви не се окаже успешен, въвеждаме променлива $W_T$, съответстваща на цената на преработване на цялата работа от начало. Ясно е, че $W_T>T.w$\par
-		\subsection{Full backups only}
-			Когато разглеждаме само пълни  full backups, the model is simply a Bernoulli distribution with finite trials, namely the number of full backups. We stop when we find a successful backup, starting from the latest and going to the last. Let us define the properties of a full backup($B_F$):
-$$
-B_F
-\begin{cases}
-p_F: \text{the probability of failure}\\
-r_F: \text{the recovery trial cost}\\
-t_F: \text{the days between two consecutive full backups}\\
-\end{cases}
-$$
-Let $k$ be the number of full backups made before the disaster date. Then:
-$$
-k = \left \lfloor{\frac{T}{t_F}}\right \rfloor + 1
-$$
-We can now define the expected backup cost:
-\begin{equation}
-\label{eq:1}
-E(T) = p_F^{k}\left(W_T + k.r_F\right) + \displaystyle \sum_{i=0}^{k-1} (1-p_F).p_F^{i}\left( \left (\left\{ \frac{T}{t_F}\right \} + i\right)t_F.w + (i+1).r_F \right )
-\end{equation}
-This calculation is essential as incremental backups can only work when there is a working full backup and therefore the first thing we need to do is find the latest one. We can now move on to considering the incremental backups given a working full backup.
-\subsection{Incremental backups with a working full backup}
-We will now consider the case when we have a working backup and we are trying to recover additional data from the incremental backups.\\
-\begin{tikzpicture}
-[every node/.style={inner sep=0pt}]
-\node (1) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (50.0pt, -130pt)  {};
-\node (2) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (135pt, -130pt)  {};
-\node (3) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (220pt, -130pt)  {};
-\node (4) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (305pt, -130pt)  {};
-\node (5) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (390pt, -130pt)  {};
-\draw [line width=0.625, ->, >=latex, color=black] (1) to  (2);
-\draw [line width=0.625, ->, >=latex, color=black] (2) to  (3);
-\draw [line width=0.625, ->, >=latex, color=black] (3) to  (4);
-\draw [line width=0.625, ->, >=latex, color=black] (4) to  (5);
-\end{tikzpicture}\\
-Let	us define the the properties of the incremental backup($B_I$) in a similar fashion:
-$$
-B_I
-\begin{cases}
-p_I: \text{the probability of failure}\\
-r_I: \text{the recovery trial cost}\\
-t_I: \text{the days between two consecutive incremental backups}\\
-\end{cases}
-$$
-\newpage
-Let $T_F$ denote the difference in days between the disaster date and the successful full backup and $l$ denote the number of incremental backups we have to consider. We have two options for $l$ depending on whether the latest full backup was successful:
-$$
-l=
-\begin{cases}
-\left\lfloor \frac{T_F}{t_I}\right \rfloor \text{, if } T_F<t_F\\
-\left\lfloor \frac{t_F}{t_I}\right \rfloor -1 \text{, if } T_F>t_F\footnotemark\\
-\end{cases}
-$$
-\footnotetext{We can only try to recover incremental backups preceding the next full backup}
-Note that the last full backup being successful is equivalent to $T_F<t_F$.\par
-We are in the exact opposite situation with respect to the previous subsection. The process of recovering incremental backups continues until we conduct an unsuccessful attempt to recover the data, as this will mean none of the following backups can be used either. Note that we are reducing $W$ since in the initial position we are willing to redo the work up to the working full backup. That being said, we are ready to calculate the expected price:
-\begin{equation}
-\label{eq:2}
-f(T_F) = (1-p_I)^l.((T_F-t_I.l).w + r_I.l) + \displaystyle \sum_{i=0}^{l-1} (1-p_I)^{i}.p_I((T_F-t_I.i)w + r_I.(i+1))
-\end{equation}
-Now we know how much the price will decrease when we use incremental backups and can build the whole picture using equations \ref{eq:1} and \ref{eq:2}.
-\subsection{Overall expected price}
-For each summand in \ref{eq:1} we should add the effect of incremental backups, so we get new summands of the type:
-$$
-P(W + R),
-$$
-where $P$ is the probability of a certain combination of events occurring, $W$ is the cost of the data that has to be reworked and $R$ is the cost of the recovery process. Incremental backups lower the cost of the data that has to be reworked but make $R$ bigger. As mentioned before, there is only one case when the number of incremental backups we have to consider is different and it corresponds to the first full backup being successful. If the $i$-th full backup is successful\footnote{This corresponds to the $i-1$-th summand in the sum from equation \ref{eq:3}}:
-$$
-T_F=t_F\left(\left\{ \frac{T}{t_F} \right\} + i - 1\right)
-$$
-By combining equations \ref{eq:1} and \ref{eq:2} we get:
-\begin{equation}\label{eq:3}
-F(T) = p_F^{k}(W_T+k.r_F) + \displaystyle\sum_{i=0}^{k-1}(1-p_F).p_F^{i}\left(f(T_F) + (i+1).r_F\right)
-\end{equation}
-Using the described equations \ref{eq:1} and \ref{eq:3}, we can construct a graph of the expected price with and without incremental backups included.
-\begin{figure}[H]
-	\begin{minipage}{1.0\textwidth}
-		\centering
-		\includegraphics[width=0.7\textwidth]{Weekly_full.png}
-		\caption{Full only and Whole model}\label{Fig:FullWeekly}
-	\end{minipage}
-\end{figure}
-\subsection{Monte Carlo simulation}
-A Monte Carlo simulation has been build with python to generate random recovery processes with the described conditions of backup structure. The price of the recovery has been graphed with respect to the disaster date:
-\begin{figure}[H]
-	\begin{minipage}{1.0\textwidth}
-		\centering
-		\includegraphics[width=0.7\textwidth]{Weekly_full_carlo.png}
-		\caption{Monte Carlo simulation}\label{Fig:MonteCarlo}
-	\end{minipage}
-\end{figure}
-\blfootnote{In both Figure \ref{Fig:FullWeekly} and Figure \ref{Fig:MonteCarlo} the data showed is for a weekly full and daily incremental backups}
-The colors in Figure \ref{Fig:MonteCarlo} represent the type of the last backup, which was successful during the recovery, full, incremental or non-existing.
-\newpage
-A linear regression has been made of the data generated, which is to show that the effect of initial unsecured data fades with time, as the price of failure is calculated as the price to redo the whole work from the creation of the company.
-\subsection{Results}
-A model for backing up data has been built to calculate the expected price of backup recovery. Furthermore, the effect of incremental backups has been shown, as opposed to a strategy using only full backups. A Monte Carlo simulation has been built and analyzed to demonstrate the real process of recovery.
-\section{Further development}
-The author considers several future development directions for the project, namely:
-\begin{itemize}
-	\item considering non-constant work rate for the backup model
-	\item expanding the ransomware model to describe more complex way of distributing the ransomware
-	\item using the results and databases of related studies in order to back the project with real data\cite{paquet2019ransomware}
-	\item considering a dynamic pricing model for the ransomware model
-\end{itemize}
-\section{Бъдещо развитие}
-	Авторът предвижда бъдещето развитие а проекта в няколко посоки, а именно:
-	\begin{itemize}
-		\item търсене на връзка между архивите и ЖЗП разпеделението
-		\item разширяване на модела с цел да описва по-сложен начин на разпространение между машините в дадена система
-		\item използването на разултатите и данните на други подобни разработки с цел подкрепянето на проекта с реални данни\cite{paquet2019ransomware}
-		\item разглеждане на динамичен модел за определяне на цената.
-	\end{itemize}
-\section{Благодарности}
-Искам да благодаря на своя ментор, Явор Папазов, и на Константин Делчев за безотказната помощ в избора на темата на проекта и последващото му развитие, за снабдяването ми с всички нужни материали за запознаването ми с темата, както и за изслушването на въпросите ми. Искам също да благодаря на Станислав Харизанов за професионалните съвети.
+		\subsection{Само пълни архиви}
+			Когато разглеждаме само пълни архиви, моделът е разпределение на Бернули с краен брой опити, а именно броят пълни архиви. Спираме, когато успеем да намерим успешен архив, започвайки от последния и вървейки към първия. Да дефинираме свойствата на пълен архив($B_F$):
+			$$
+			B_F
+			\begin{cases}
+			p_F: \text{вероятността за провал}\\
+			r_F: \text{цената за опит за възстановяване}\\
+			t_F: \text{дните между два последователни пълни архива}\\
+			\end{cases}
+			$$
+			Нека $k$ е броят пълни архиви направени преди деня на атаката. Тогава:
+			$$
+			k = \left \lfloor{\frac{T}{t_F}}\right \rfloor + 1
+			$$
+			Сега можем да дефинираме очакваната цена на възстановяване:
+			\begin{equation}
+			\label{eq:1}
+			E(T) = p_F^{k}\left(W_T + k.r_F\right) + \displaystyle \sum_{i=0}^{k-1} (1-p_F).p_F^{i}\left( \left (\left\{ \frac{T}{t_F}\right \} + i\right)t_F.w + (i+1).r_F \right )
+			\end{equation}
+			Направените изчисления са ключови поради невъзможността инкременталните архиви да бъдат възстановени без работещ пълен архив и следователно намирането на такъв е първият ни приоритет. Сега можем да разгледаме инкременталните архиви при работещ пълен архив.
+		\subsection{Инкрементални архиви с работещ пълен архив}
+			Ще разгледаме случая, когато имаме работещ пълен архив и се опитваме да възстановив допълнителни данни чрез инкрементални архиви.\\
+			\begin{tikzpicture}
+			[every node/.style={inner sep=0pt}]
+			\node (1) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (50.0pt, -130pt)  {};
+			\node (2) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (135pt, -130pt)  {};
+			\node (3) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (220pt, -130pt)  {};
+			\node (4) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (305pt, -130pt)  {};
+			\node (5) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (390pt, -130pt)  {};
+			\draw [line width=0.625, ->, >=latex, color=black] (1) to  (2);
+			\draw [line width=0.625, ->, >=latex, color=black] (2) to  (3);
+			\draw [line width=0.625, ->, >=latex, color=black] (3) to  (4);
+			\draw [line width=0.625, ->, >=latex, color=black] (4) to  (5);
+			\end{tikzpicture}\\
+			Нека дефинираме свойствата на инкременталните архиви ($B_I$) по подобен начин:
+			$$
+			B_I
+			\begin{cases}
+				p_I: \text{вероятността за провал}\\
+				r_I: \text{цената за опит за възстановяване}\\
+				t_I: \text{дните между два последователни инкрементални архива}\\
+			\end{cases}
+			$$
+	\newpage
+			Нека с $T_F$ да означим разликата в дни между денят на атаката и датата на успешния пълен архив и с $l$ да означим броят инкрементални архиви, които трябва да разгледаме. Имаме две опции за $l$ в зависимост от това дали последният пълен архив е бил успешно възстановен:
+			$$
+			l=
+			\begin{cases}
+			\left\lfloor \frac{T_F}{t_I}\right \rfloor \text{, ако } T_F<t_F\\
+			\left\lfloor \frac{t_F}{t_I}\right \rfloor -1 \text{, ако } T_F>t_F\footnotemark\\
+			\end{cases}
+			$$
+			\footnotetext{Можем да опитваме да възстановим само инкрементални архиви предхождащи следващият пълен архив}
+			Да отбележим, че това последният пълен архив да е успешен е еквивалентно на $T_F<t_F$.\par
+			Сега сме в точно обратната ситуация спрямо миналата част. Процесът по възстановяване на инкрементални архиви продължава докато не се натъкнем на провал, тъй като това би означавало, че всички следващи инкрементални архиви също са неизползваеми. С това намаляме $W$, тъй като в началната позиция сме готови да преработим данните до датата на успешния пълен архив. Сега сме готови да изчислим очакваната цена:
+			\begin{equation}
+				\label{eq:2}
+				f(T_F) = (1-p_I)^l.((T_F-t_I.l).w + r_I.l) + \displaystyle \sum_{i=0}^{l-1} (1-p_I)^{i}.p_I((T_F-t_I.i)w + r_I.(i+1))
+			\end{equation}
+			Сега знаем колко ще намалее цената на възстановяването, когато използваме инкрементални архиви, и можем да построим цялостния модел, използвайки уравнения \ref{eq:1} и \ref{eq:2}.
+		\subsection{Крайна очаквана цена}
+			Към всяко събираемо в уравнение \ref{eq:1} Трябва да добавим ефектът на инкременталните архиви и получаваме нови събираеми от вида:
+			$$
+			P(W + R),
+			$$
+			където $P$ е вероятността определена комбинация от събития да се случи, $W$ е цената на данните, които трябва да бъдат създадени наново, а $R$ е цената на процесът по възстановяването. Инкременталните архиви намаляват цената на данните, които трябва да бъдат създадени наново, но увеличават $R$. Както споменахме по-горе, има само един случай, вкойто броят инкрементални архиви, които трябва да имаме предвид е различен и той е именно този, в който последният пълен архив е възстановен успешно. Ако $i$-тият пълен архив е успешен\footnote{Това съответства на $i-1$-вото събираемо в сумата от уравнение \ref{eq:3}}:
+			$$
+			T_F=t_F\left(\left\{ \frac{T}{t_F} \right\} + i - 1\right)
+			$$
+			Комбинирайки уравнения \ref{eq:1} и \ref{eq:2} получаваме:
+			\begin{equation}\label{eq:3}
+			F(T) = p_F^{k}(W_T+k.r_F) + \displaystyle\sum_{i=0}^{k-1}(1-p_F).p_F^{i}\left(f(T_F) + (i+1).r_F\right)
+			\end{equation}
+			Използвайки уравнения \ref{eq:1} и \ref{eq:3}, можем да построим графика на очакваната цена с и без използването на инкрементални архиви.
+			\begin{figure}[H]
+				\begin{minipage}{1.0\textwidth}
+					\centering
+					\includegraphics[width=0.7\textwidth]{Weekly_full.png}
+					\caption{Full only and Whole model}\label{Fig:FullWeekly}
+				\end{minipage}
+			\end{figure}
+		\subsection{Симулация Монте Карло}
+			Направена бе симулация от тип Монте Карло на python, която генерира случайни процеси на възстановяване на данни с описаната структура на архивите. Цената на възстановяването беше направена на графика спрямо датата на атаката:
+			\begin{figure}[H]
+				\begin{minipage}{1.0\textwidth}
+					\centering
+					\includegraphics[width=0.7\textwidth]{Weekly_full_carlo.png}
+					\caption{Симулация Монте Карло}\label{Fig:MonteCarlo}
+				\end{minipage}
+			\end{figure}
+			\blfootnote{Във фигура \ref{Fig:FullWeekly} и фигура \ref{Fig:MonteCarlo} данните са за седмичен пълен архив и ежедневен инкрементален}
+			Цветовете във фигура \ref{Fig:MonteCarlo} показват вида на последния успешно възстановен архив, пълен, инкрементален или несъществуващ.
+			\newpage
+			Линейна регресия на данните беше генерирана, която показва ефектът от начално неподсигурените данни изчезва с времето, тъй като цената при провал се изчилсява като цената за преработването на всички данни, които компанията е генерирала.
+		\subsection{Резултати}
+			Беше построен модел за изчисляване на очакваната цена при възстановяване на данни. Нещо повече, ефектът от инкременталните архиви беше показан в сравнение със стратегия използваща само пълни архиви. Беше направена и анализирана симулация от тип Монте Карло, коятодемонстрира реалния процес на възстановяване.
+	\section{Бъдещо развитие}
+		Авторът разглежда няколко посоки за бъдещото развитие на проакта, а именно:
+		\begin{itemize}
+			\item разглеждане на неконстантна скорост на работа за модела за архивиране
+			\item разширяване на модела за откуп в посока описване на по сложни начини за разпространение на рансъмуера.
+			\item използване на резултатите и базите данни на подобни проучвания с цел подкрепянето на модела с реални данни.\cite{paquet2019ransomware}
+			\item използване на динамичен модел за оценка на откупа
+		\end{itemize}
+	\section{Благодарности}
+		Искам да благодаря на своя ментор, Явор Папазов, и на Константин Делчев за безотказната помощ в избора на темата на проекта и последващото му развитие, за снабдяването ми с всички нужни материали за запознаването ми с темата, както и за изслушването на въпросите ми. Искам също да благодаря на Станислав Харизанов за професионалните съвети.
 \nocite{*}
 \bibliographystyle{unsrt}
 \bibliography{Bibliography}
