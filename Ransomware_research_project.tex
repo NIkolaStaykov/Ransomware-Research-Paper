@@ -51,9 +51,9 @@
 \begin{titlepage}
 	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 	\centering
-	\textsc{\LARGE Innofair 2019}\\[1cm]
+	\textsc{\LARGE Young Talents 2020}\\[1cm]
 	\HRule\\[1 cm]
-	{\huge\bfseries On Ransomware and Resilient Backup Strategies}\\[0.5 cm] 
+	{\huge\bfseries Resilient Backup Strategies}\\[0.5 cm] 
 	\HRule\\
 			\vfill
 			\Large
@@ -76,156 +76,11 @@
 \end{abstract}
 
 \section{Introduction}
-	This project is structured in two main parts, considering respectively models for ransom optimization and backup optimization. By thoroughly examining both viewpoints in a situation, a full picture of the strategies of both the attackers and the victims has been created. Considering ways both sides can optimize their profits and expenses gives us insight on how to build a solid backup strategy.
-\section{Preliminaries}
-	In this section are stated all the needed definitions and concepts one needs to fully understand the paper.
-		\begin{definition}
-			\label{def:normdist}
-			\emph{Normal Distribution}, denoted by $N(\mu, \sigma)$, is a type of continuous distribution, such that $\mu$, $\sigma$ and $\sigma^{2}$ denote the mean, the standard deviation and the variance, respectively.
-		\end{definition}
-	
-		The graph of this function forms a curve, often called informally bell curve. It has maximum $(x,f(x))$ at $\left(\mu, \dfrac{1}{\sigma\sqrt{2\pi}}\right)$:
-		\begin{center}
-			\includegraphics[width=0.6\textwidth]{Normal_clean}
-		\end{center}
-		
-		\begin{definition}
-			\label{def:def2}
-			Consider a normal distribution $N(\mu, \sigma)$. The \emph{standard value}, or the \emph{Z-score}, of a given $x$ evaluates how many standard deviations away from the mean the given value is. It is computed by $\dfrac{x-\mu}{\sigma}$.
-		\end{definition}
-	
-		\begin{definition}
-			\label{def:prob_dist}
-			For a given distribution the \emph{probability distribution function} $F(x)$ calculates the probability that a random variable, following the distribution, is less or equal to $x$
-			$$F_{X}(x)=\mathbb{P}(x\leq X).$$
-		\end{definition}
-	
-		\begin{definition}
-			\label{def:prob_dens}
-			The \emph{Probability density function} of a continuous random variable $x$, a probability density function describes the probability a random variable $x$ to appear in any interval. Formally it is defined by
-			\begin{align*}
-				&\mathbb{P}(x < X \leq x+\Delta)=F_X(x+\Delta)-F_X(x)\\
-				&f_X(x)=\lim_{\Delta \rightarrow 0} \frac{F_X(x+\Delta)-F_X(x)}{\Delta}.		
-			\end{align*}
-		\end{definition}
-	
-		\begin{definition}
-			\label{def:err}
-			\emph{The error function} is encountered in integrating the normal distribution, it takes z-score as a parameter and calculates the integral between a fixed point and the mean of the distribution
-			$$\operatorname{erf}(z)=\dfrac{2}{\sqrt{\pi}}\int_{0}^{z}e^{-t^{2}}dt.$$
-		\end{definition}
-	
-		\begin{definition}
-			\label{def:Bernoulli_trial}
-			\emph{A Bernoulli trial} is a random experiment with two outcomes and fixed probability of failure and therefore success:
-			\begin{center}
-			$P(\text{success})=p$\\
-			$P(\text{failure})=1-p.$
-			\end{center}
-		\end{definition}
-	
-		\begin{definition}
-			\label{def:Binomial_distribution}
-			\emph{A binomial distribution} is the statistical distribution of outcomes(success/failure) when conducting a number of independent Bernoulli trials.
-			For $n$ trials and success probability $p$ the probability that exactly $k$ of them are successful is:
-			$$
-			P(\text{success} = k) = \frac{\binom{n}{k}p^{k}(1-p)^{n-k}}{2^k}
-			$$
-		\end{definition}
+	The current project builds a theoretical mathematical model in order to find an optimal backup strategy. The model considers two types of archives, full and incremental. The parameters, which we optimize, are the intervals in days between the types of archives. The structure of the archives between two full archives forms a cycle, which is then repeated indefinitely. It is defined entirely by two intervals- between two full and between two incremental backups. The results are based on two main factors, the probability of recovery failure and storage cost. The effects are calculated separately and then combined via a constant, showing the relation between the size and value of the data. Similar models have been built in the past \cite{qian2010optimal}, \cite{nakamura2003optimal}, but they consider only the storage price with non-constant generation speed. There the interval between two consecutive archives is non-constant. For the full comprehension of the project basic knowledge of probability and statistics is needed. The used definitions and notations are standard.
 \newpage
-	\section{Ransom optimization}
-		\subsection{Introduction}
-			Ransomware first appeared in 1989 in the form of the AIDS Troyan, aka PC Cyborg.  The AIDS Trojan was pretty easy to overcome as it used simple symmetric cryptography and tools were soon available to decrypt the files, but this case set the ground for a lot of the modern threats. With the coming of the Internet age, ransomware returned with new power, namely with the Archiveus Trojan and GPcode from 2006. Another turning point in the history of ransomware was the invention of bitcoin, and crypto-currencies as a whole, for several reasons, a few of them being anonymity, the transactions are fully automatable and the transactions are irrefutable\cite{huang2018tracking}.\par
-			In the recent years there have been some attempts to model the ransomware market. In \cite{caulfielddynamic}, the authors have created a theoretical model, taking into consideration the number of users, who have backups, as well as other factors such as information spread and reliability of the ransomware.\par                 
-			In \cite{cartwright2018pay} a different approach has been explored, considering the possibility for bargaining and respectively a game between the victim and the criminals. This paper focuses on game theory and combinatorics.\par
-			There has also been considerable amount of effort dedicated to tracking the ransomware payments in the blockchain, as all of them are public. As a result, there is a public data record of such payments, provided by \cite{paquet2019ransomware} and in \cite{thomas2015framing} many one can observe many data-based conclusions not only concerning ransomware, but also the whole black market.\par
-			In this paper, the model is based on the one described in \cite{caulfielddynamic}, but focuses on optimizing different parameters, unexplored in the aforementioned research.
-		\subsection{Approach}
-			This model describes the spreading of a ransomware virus. It calculates the optimal ransom for a ransomware attack, distributed exclusively via botnets, without the key component of spreading to every computer in the network. This variant of the attack is relatively cheap to initiate, but has low efficiency.	We treat the act of decrypting the data of a given computer as a service and the ransom as the service price, respectively. \par
-			Consider the distribution of the willingness to pay (WTP) of a given target group. This is the maximum price someone would pay for their data. By putting ourselves in the place of the ransomware authors, we try to find what the distribution is by examining samples of people and how they respond to a given price. This tests, however, cost us valuable time since the awareness of people rises constantly. We strive to determine how many and how big tests should we conduct in order to model the distribution with reasonable error and in the same time not lose too much time?\par
-			For a given size of the sample group, we calculate the error of a set of sample `customers' from the mathematically described function of the demand curve, derived from the distribution of WTP. Starting off low, we gradually expand the sample group size, estimating the expected error, via the Least Squares Approach, at each step.
-	\newpage
-		\subsection{Model}
-			Here the inner workings of the model are stated in detail, showing how the results and conclusions were reached.
-			\subsubsection{Sample size and error}
-			This section describes the mathematical model, used to optimize the error and draw conclusions about the sample size.\par
-			We assume people's data value follows a normal distribution and link it to a random variable $p\sim N(500, 150)$. The probability density function (PDF) of a normal distribution $N(\mu, \sigma)$ is $$\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu)^{2}}{2\sigma^{2}}}.$$\par\noindent
-			In order to calculate the demand function $f(k)$ from the PDF for a given price $k$, we need to calculate
-			$$\int_{k}^{\infty}f(x)\operatorname{d} x.$$
-			\begin{figure}[H]
-				\begin{minipage}{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth]{ND_integral}
-					\caption{PDF}\label{Fig:Data1}
-				\end{minipage}$\longrightarrow$
-				\begin{minipage}{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth]{Sample_point}
-					\caption{Price vs Demand}\label{Fig:Data2}
-				\end{minipage}
-			\end{figure}\par\noindent
-			We note that the integral must be calculated up to infinity, but after $k$ reaches $\mu+3\sigma$, the resulting integral is negligibly small. Doing this for the whole probability distribution function gives us the demand curve with respect to what percent of the people would pay. Let us denote the demand curve function with $F(x)$:
-			$$
-			F(x)=
-			\begin{cases}
-				\dfrac{1}{2}\left (1-\operatorname{erf}\left (\dfrac{z}{\sqrt{2}}\right )\right ) \text{if } x>\mu,\\
-				\\
-				\dfrac{1}{2}\left (1+\operatorname{erf}\left (\dfrac{z}{\sqrt{2}}\right )\right ) \text{if } x<\mu.
-			\end{cases}
-			$$\par
-			We aim to optimize the number of people each sample group consists of. Knowing the actual mathematical function we aim to describe gives us the possibility to evaluate the errors from the experimental data with maximum accuracy.
-			\begin{figure}[H]
-				\begin{minipage}{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth]{Exp_and_math_100}
-					\caption{Sample size 100}\label{Fig:Data3}
-				\end{minipage}\hfill
-				\begin{minipage}{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth]{Exp_and_math_400}
-					\caption{Sample size 400}\label{Fig:Data4}
-				\end{minipage}
-			\end{figure}\par\noindent
-			By gathering information on the sample size and the corresponding errors, we plot the changes in the error.
-			\begin{figure}[H]
-			\begin{minipage}{1.0\textwidth}
-				\centering
-				\includegraphics[width=0.7\textwidth]{"Error vs sample size 4"}
-				\caption{Sample size vs Error}\label{Fig:Data5}
-			\end{minipage}
-			\end{figure}	
-			%\subsubsection{Backup function}
-			%	In this section a function, describing the use of backups, is described. The effect on revenue is calculated.\par
-			%	First let us define the backup iterator $b$: 
-			%$$
-			%b=
-			%\begin{cases}
-			%	1 \text{ if the victim has backup},\\
-			%	0 \text{ if the victim does not have backup}
-			%\end{cases}
-			%$$
-			%Now let us define the willingness to pay (WTP) function:
-			%$$
-			%P(x)=
-			%\begin{cases}
-			%d_{x} \text{ if } b_{i}=0,\\
-			%c \text{ if } b_{i}=1
-			%\end{cases}
-			%$$
-			%	Here the cost of backup is denoted with $c$ and the value of the victim's data - with $d_{x}$.\par
-			%	As earlier, we can calculate the expected probability of people paying a ransom of price $x$
-			%	We assume that the probability that a single victim has backup follows is $p$ and explore how changing this value affects the expected profit. With the gathered data, we create a plot to show the correlation between the two variables
-			%\begin{center}
-			%	\includegraphics[width=0.55\textwidth]{Revenue_vs_backup}
-			%\end{center}
-		\subsection{Results}
-		We have explored how the sample size affects the expected error between the statistical and experimental data and have explored how backups affect expected revenue. The model mainly focuses on optimizing the ransom prize, but the author truly believes that in order for us to be able to take countermeasures against ransomware attacks, we need to understand their every move and essential for the purpose. We can use the gathered data to create a resilient backup strategy.
-\section{Backup optimization}
-	\subsection{Introduction}
-		When it comes to protection from ransomware, the most efficient method is building backups. This, however, has to be done regularly, as the effects after a potential attack will otherwise be insignificant. That is why it is important for backup protocols to be carefully build, considering both the risks of being attacked and the resources needed for the job. Furthermore, optimizing the backups can simultaneously increase the security level and save money.\par
-		In this section, a model for backing up data is considered in order to calculate the expected price. Such models, considering two options for backups: full and incremental, have been constructed and researched in the past\cite{nakamura2003optimal}\cite{qian2010optimal}. We consider a cycle of backups, which repeats over between any two full backups and study how the intervals affect the expected price and how fast the effect of initial data, accumulated before the initial full backup, vanishes over time.
-	\subsection{Theoretical setting}
-		The idea behind the described model is to calculate and optimize the expected price of the recovery in case of an attack.\par
+\section{Theoretical setting}
+		The idea behind the described model is to calculate and optimize the expected price as a sum of two components, recovery price and storage price. The two are considered separately and the expected price for each is calculated according to the backup strategy. The model combines the two via a constant, reflecting the connection between the size and value of the data. As this varies from company to company, it allows for the results to fit the user's needs.
+	\subsection{Recovery}
 		We will consider a backup as a structure, containing the following properties:
 		$$
 		B
@@ -254,6 +109,16 @@
 		S=\Delta t.w + R,
 		$$
 		Let the difference in days from the first backup to the disaster date be $T$. In case none of the backups are successful, we consider a variable $W_T$, corresponding to the price of redoing the whole work the company has done from the beginning. It is clear that $W_T>T.w$\par
+\newpage
+		\subsection{Storage}
+		At a given moment each existing archive generates storage cost in relation to its size and the time it has existed. We assume that the size of the generated data, S, is proportional to the value of the generated data, W, described in the last paragraph. Then $Sc = W$, where $c$ is a constant. The storage price for the data generated in one day, for one day, we denote with $s$. Then the contribution to the total price of each individual archive can be described as follows:
+		\begin{equation*}
+			P_S = S\Delta ts
+		\end{equation*}
+		where with $\Delta t$ we denote the time, in which it has been kept.\\
+		Full and incremental backups have different contribution as the size of full backups is constantly growing and the size of incremental backups is fixed.
+	\section{Recovery price}
+		This section describes the component of the model, related to the recovery process and the following re-make of lost data.
 		\subsection{Full backups only}
 		When we only consider a set of full backups, the model is simply a Bernoulli distribution with finite trials, namely the number of full backups. We stop when we find a successful backup, starting from the latest and going to the last. Let us define the properties of a full backup($B_F$):
 		$$
@@ -335,6 +200,7 @@
 				\caption{Full only and Whole model}\label{Fig:FullWeekly}
 			\end{minipage}
 		\end{figure}
+		\subsection{Correlation of data}
 		\subsection{Monte Carlo simulation}
 			A Monte Carlo simulation has been build with python to generate random recovery processes with the described conditions of backup structure. The price of the recovery has been graphed with respect to the disaster date:
 			\begin{figure}[H]
@@ -348,15 +214,61 @@
 		The colors in Figure \ref{Fig:MonteCarlo} represent the type of the last backup, which was successful during the recovery, full, incremental or non-existing.
 		\newpage
 		A linear regression has been made of the data generated, which is to show that the effect of initial unsecured data fades with time, as the price of failure is calculated as the price to redo the whole work from the creation of the company.
-		\subsection{Results}
-			A model for backing up data has been built to calculate the expected price of backup recovery. Furthermore, the effect of incremental backups has been shown, as opposed to a strategy using only full backups. A Monte Carlo simulation has been built and analyzed to demonstrate the real process of recovery.
+\section{Storage price}
+	The storage price is generated from the existing archives as for each individually depends on its type and creation dates. For the purposes of the model we assume that the size of the data, S, is proportional to the price of their creation. We introduce the constant $c=\dfrac{S}{W}$.\\
+	At a given moment, T, we want to calculate the the contribution of a full backup, created $d$ days after the first backup. The number of days of generating data before the first archive we will denote with $T_0$. Then the archive has size $S=\dfrac{W}{c}=\dfrac{w\Delta t}{c}=\dfrac{w}{c}(T_0 + d)$, where $w$ is the work rate from the previous component. The storage price for a day is $s=\dfrac{w}{c}$ and we have kept it $T-d$ days. Therefor the backup has generated storage price:
+	$$
+	\dfrac{w}{c}(T_0 + d)s(T-d).
+	$$
+	Incremental backups, on the other hand, have fixed size $cwt_I$. Their contribution to the storage price is only change by the time they have been kept, namely $T-d$. Therefore the contribution of an incremental archive, created $d$ days after the first backup is:
+	$$
+	\dfrac{w}{c}t_Is(T-d)
+	$$
+	Let $B_I$ be the set of all incremental backups and $B_F$ that of all full backups. The the storage price is:
+	\begin{equation}\label{eq:4}
+		\left(\displaystyle\sum_{b\in B_F}\dfrac{w^2}{c^2}(T_0 + d_b)(T-d_b)\right) + 	\left(\displaystyle\sum_{b\in B_I}\dfrac{w^2}{c^2}t_I(T-d_b)\right).
+	\end{equation}
+	For $b\in B_F$, $d_b$ takes values:
+	$$lt_F|\ l\in \left[0,\left\lfloor\dfrac{T}{t_F}\right\rfloor t_F\right],$$
+	and for $b\in  B_I$:
+	$$d_b= mt_F + nt_I|\ m\in \left[0, \left\lfloor\dfrac{T}{t_F}\right\rfloor\right],n\in \left[1, \left\lfloor\dfrac{t_F}{t_I}\right\rfloor\right].$$
+	Substituting in \ref{eq:4} we get
+	\begin{equation}
+		\left(\displaystyle\sum_{l = 0}^{\left\lfloor\frac{T}{t_F}\right\rfloor t_F}\dfrac{w^2}{c^2}(T_0 + lt_F)(T-lt_F)\right) + \left(\displaystyle\sum_{m = 0}^{\left\lfloor\frac{T}{t_F}\right\rfloor}\displaystyle\sum_{n = 1}^{\left\lfloor\frac{t_F}{t_I}\right\rfloor}\dfrac{w^2}{c^2}t_I(T-mt_F + nt_I)\right)
+	\end{equation}
+	With that we ca find the storage price of the generated data. Changing the ratio between the storage size and the value of the generated data ($c$), we can find optimal backup strategies with respect to the intervals between consecutive full and incremental backups.
+\section{Results}
+	The table below summarizes the results for an optimal strategy for different values of $c$:
+	\begin{center}
+		\begin{tabular}{| l | l | l |}
+			\hline
+			Constant $c$ & Full interval & Incremental interval\\ \hline
+			100-200 & 29 & 16\\ \hline
+			200-400 & 29 & 10\\ \hline
+			400-600 & 21 & 8\\ \hline
+			600-800 & 16 & 6\\ \hline
+			800-1000 & 16 & 6\\ \hline
+			1000-1400 & 13 & 5\\ \hline
+			1400-1600 & 11 & 3\\ \hline
+			1600-4100 & 8 & 3\\ \hline
+			4100-4500 & 6 & 3\\ \hline
+			4500-7000 & 5 & 2\\ \hline
+		\end{tabular}
+	\end{center}
+	\begin{figure}[H]
+		\begin{minipage}{1.0\textwidth}
+			\centering
+			\includegraphics[width=0.7\textwidth]{3d_all_1.png}
+			\caption{Visualization for $c=1000$}\label{Fig:Whole_model}
+		\end{minipage}
+	\end{figure}
+	\newpage
 \section{Further development}
 	The author considers several future development directions for the project, namely:
 	\begin{itemize}
-		\item considering non-constant work rate for the backup model
-		\item expanding the ransomware model to describe more complex way of distributing the ransomware
-		\item using the results and databases of related studies in order to back the project with real data\cite{paquet2019ransomware}
-		\item considering a dynamic pricing model for the ransomware model
+		\item non-constant work rate for the 
+		\item complex connection between data value and storage price
+		\item Data correlation for easier recovery from partial leftover files
 	\end{itemize}
 \section{Acknowledgments}
 I want to thank my mentor, Yavor Papazov, and Konstantin Delchev for the enormous help with the choice of the research subject and for providing me with all the necessary material to get familiar with the topic, as well as listening to my questions along the whole way. I extend my gratitude towards HSSIMI and SRS for the opportunity to develop this project and the irreplaceable atmosphere of dedication and concentration.
