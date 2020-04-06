@@ -1,0 +1,26 @@
+\begin{thebibliography}{1}
+
+\bibitem{qian2010optimal}
+Cunhua Qian, Yingyan Huang, Xufeng Zhao, and Toshio Nakagawa.
+\newblock {Optimal Backup Interval for a Database System with Full and Periodic
+  Incremental Backup}.
+\newblock {\em Journal of Computers}, 5(4), apr 2010.
+
+\bibitem{nakamura2003optimal}
+S.~Nakamura, C.~Qian, S.~Fukumoto, and T.~Nakagawa.
+\newblock {Optimal backup policy for a database system with incremental and
+  full backups}.
+\newblock {\em Mathematical and Computer Modelling}, 38(11-13):1373--1379, dec
+  2003.
+
+\bibitem{Gloukhovtsev}
+Mikhail Gloukhovtsev.
+\newblock Technical report, 2014.
+
+\bibitem{Schepers}
+J~Schepers and P~Huisken.
+\newblock {Backup and Restore Backup alternatives for Network Appliance
+  filers}.
+\newblock Technical report, 2001.
+
+\end{thebibliography}

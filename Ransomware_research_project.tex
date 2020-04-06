@@ -76,7 +76,7 @@
 \end{abstract}
 
 \section{Introduction}
-	The current project builds a theoretical mathematical model in order to find an optimal backup strategy. The model considers two types of archives, full and incremental. The parameters, which we optimize, are the intervals in days between the types of archives. The structure of the archives between two full archives forms a cycle, which is then repeated indefinitely. It is defined entirely by two intervals- between two full and between two incremental backups. The results are based on two main factors, the probability of recovery failure and storage cost. The effects are calculated separately and then combined via a constant, showing the relation between the size and value of the data. Similar models have been built in the past \cite{qian2010optimal}, \cite{nakamura2003optimal}, but they consider only the storage price with non-constant generation speed. There the interval between two consecutive archives is non-constant. For the full comprehension of the project basic knowledge of probability and statistics is needed. The used definitions and notations are standard.
+	The current project builds a theoretical mathematical model in order to find an optimal backup strategy. The model considers two types of archives, full and incremental. The parameters, which we optimize, are the intervals in days between the types of archives. The structure of the archives between two full archives forms a cycle, which is then repeated indefinitely. It is defined entirely by two intervals- between two full and between two incremental backups. The results are based on two main factors, the probability of recovery failure and storage cost. The effects are calculated separately and then combined via a constant, showing the relation between the size and value of the data. Similar models have been built in the past \cite{qian2010optimal}, \cite{nakamura2003optimal}, but they consider only the storage price with non-constant generation speed. There the interval between two consecutive archives is non-constant. The possibility for correlation between the lost and recovered data is also considered. For the full comprehension of the project basic knowledge of probability and statistics is needed. The used definitions and notations are standard.
 \newpage
 \section{Theoretical setting}
 		The idea behind the described model is to calculate and optimize the expected price as a sum of two components, recovery price and storage price. The two are considered separately and the expected price for each is calculated according to the backup strategy. The model combines the two via a constant, reflecting the connection between the size and value of the data. As this varies from company to company, it allows for the results to fit the user's needs.
@@ -192,28 +192,22 @@
 		\begin{equation}\label{eq:3}
 			F(T) = p_F^{k}(W_T+k.r_F) + \displaystyle\sum_{i=0}^{k-1}(1-p_F).p_F^{i}\left(f(T_F) + (i+1).r_F\right)
 		\end{equation}
-		Using the described equations \ref{eq:1} and \ref{eq:3}, we can construct a graph of the expected price with and without incremental backups included.
-		\begin{figure}[H]
-			\begin{minipage}{1.0\textwidth}
-				\centering
-				\includegraphics[width=0.7\textwidth]{"Weekly_full"}
-				\caption{Full only and Whole model}\label{Fig:FullWeekly}
-			\end{minipage}
-		\end{figure}
 		\subsection{Correlation of data}
+			As there can be a connection between the recovered and lost data, we introduce a function to show the relation between the work rate($w$) and the recovery rate($r$) as a function of the fraction of data lost $x$\ref{Fig:Rec_rate}:
+			$$
+			\dfrac{r}{w} = g(x) = e^{1-x}
+			$$
+			The more data we have lost, the closer the recovery rate to the work rate. If the recovery takes place at time $T$ and the closes successful backup was made on a date $b_d$, the lost data are from $\Delta t = T - b_d$ days and $x = \dfrac{\Delta t}{T + T_0}$, where $T_0$ is the number of days before the first backup.\\
+			If the last successfully recovered incremental backup is the $i-$th in its cycle, we have:
+			$$x = \dfrac{T_F-t_Ii}{T + T_0}.$$
+			We can now substitute $w$ with $r=wg(x)$ in \ref{eq:2}, respectively in \ref{eq:3}:
+			\begin{equation}
+			\label{eq:4}
+			f(T_F) = (1-p_I)^l((T_F-t_Il)wg(x) + r_Il) + \displaystyle \sum_{i=0}^{l-1} (1-p_I)^{i}p_I((T_F-t_Ii)wg(x) + r_I(i+1)).
+			\end{equation}
 		\subsection{Monte Carlo simulation}
-			A Monte Carlo simulation has been build with python to generate random recovery processes with the described conditions of backup structure. The price of the recovery has been graphed with respect to the disaster date:
-			\begin{figure}[H]
-				\begin{minipage}{1.0\textwidth}
-					\centering
-					\includegraphics[width=0.7\textwidth]{"Weekly_full_carlo"}
-					\caption{Monte Carlo simulation}\label{Fig:MonteCarlo}
-				\end{minipage}
-			\end{figure}
-		\blfootnote{In both Figure \ref{Fig:FullWeekly} and Figure \ref{Fig:MonteCarlo} the data showed is for a weekly full and daily incremental backups}
-		The colors in Figure \ref{Fig:MonteCarlo} represent the type of the last backup, which was successful during the recovery, full, incremental or non-existing.
-		\newpage
-		A linear regression has been made of the data generated, which is to show that the effect of initial unsecured data fades with time, as the price of failure is calculated as the price to redo the whole work from the creation of the company.
+			A Monte Carlo simulation has been build with Python to generate random recovery processes with the described conditions of backup structure. The price of the recovery has been graphed with respect to the disaster date\ref{Fig:MonteCarlo}
+		
 \section{Storage price}
 	The storage price is generated from the existing archives as for each individually depends on its type and creation dates. For the purposes of the model we assume that the size of the data, S, is proportional to the price of their creation. We introduce the constant $c=\dfrac{S}{W}$.\\
 	At a given moment, T, we want to calculate the the contribution of a full backup, created $d$ days after the first backup. The number of days of generating data before the first archive we will denote with $T_0$. Then the archive has size $S=\dfrac{W}{c}=\dfrac{w\Delta t}{c}=\dfrac{w}{c}(T_0 + d)$, where $w$ is the work rate from the previous component. The storage price for a day is $s=\dfrac{w}{c}$ and we have kept it $T-d$ days. Therefor the backup has generated storage price:
@@ -225,7 +219,7 @@
 	\dfrac{w}{c}t_Is(T-d)
 	$$
 	Let $B_I$ be the set of all incremental backups and $B_F$ that of all full backups. The the storage price is:
-	\begin{equation}\label{eq:4}
+	\begin{equation}\label{eq:5}
 		\left(\displaystyle\sum_{b\in B_F}\dfrac{w^2}{c^2}(T_0 + d_b)(T-d_b)\right) + 	\left(\displaystyle\sum_{b\in B_I}\dfrac{w^2}{c^2}t_I(T-d_b)\right).
 	\end{equation}
 	For $b\in B_F$, $d_b$ takes values:
@@ -238,31 +232,8 @@
 	\end{equation}
 	With that we ca find the storage price of the generated data. Changing the ratio between the storage size and the value of the generated data ($c$), we can find optimal backup strategies with respect to the intervals between consecutive full and incremental backups.
 \section{Results}
-	The table below summarizes the results for an optimal strategy for different values of $c$:
-	\begin{center}
-		\begin{tabular}{| l | l | l |}
-			\hline
-			Constant $c$ & Full interval & Incremental interval\\ \hline
-			100-200 & 29 & 16\\ \hline
-			200-400 & 29 & 10\\ \hline
-			400-600 & 21 & 8\\ \hline
-			600-800 & 16 & 6\\ \hline
-			800-1000 & 16 & 6\\ \hline
-			1000-1400 & 13 & 5\\ \hline
-			1400-1600 & 11 & 3\\ \hline
-			1600-4100 & 8 & 3\\ \hline
-			4100-4500 & 6 & 3\\ \hline
-			4500-7000 & 5 & 2\\ \hline
-		\end{tabular}
-	\end{center}
-	\begin{figure}[H]
-		\begin{minipage}{1.0\textwidth}
-			\centering
-			\includegraphics[width=0.7\textwidth]{3d_all_1.png}
-			\caption{Visualization for $c=1000$}\label{Fig:Whole_model}
-		\end{minipage}
-	\end{figure}
-	\newpage
+	The results from the model are systemized in the appendix. The two cases for data correlation are compared [\ref{table_clean}, \ref{table_corr}]. The respective best strategies are extracted. The backups are stored for a given period of time, which depends on the type of data. It is known, however, that the mean storage interval is from 1 to 3 months \cite{Gloukhovtsev}, \cite{Schepers}. This is why the strategies are evaluated considering their mean score for values of $T$ in this interval. As the model aims to find the best strategy, we may assume that $w$ is unity and to measure the result in days of work. This is to say that the price drawn from the model is actually the price of the data we would have created for the respective number of days. The relation between the scores of the best strategies, respectively in the two cases, is also shown for different values of $c$ \ref{Fig:Corr_vs_clean}. It is important to note that these strategies are not the same but for a given $c$ the optimal strategy when the data is correlated always performs better that that without data correlation.\par 
+	A model was built to estimate the expected price of recovering data and its storage with and without correlation of the stored data. A Monte Carlo simulation was created and analyzed in order to demonstrate the actual recovery process.
 \section{Further development}
 	The author considers several future development directions for the project, namely:
 	\begin{itemize}
@@ -272,7 +243,118 @@
 	\end{itemize}
 \section{Acknowledgments}
 I want to thank my mentor, Yavor Papazov, and Konstantin Delchev for the enormous help with the choice of the research subject and for providing me with all the necessary material to get familiar with the topic, as well as listening to my questions along the whole way. I extend my gratitude towards HSSIMI and SRS for the opportunity to develop this project and the irreplaceable atmosphere of dedication and concentration.
+\newpage
 \bibliographystyle{unsrt}
-\nocite{*}
 \bibliography{Bibliography}
+\section{Appendix}
+\subsection{Plots and graphics}
+The graphic below symbolizes the way we search through existing backups for the last available to recover.
+\begin{center}
+	\begin{tikzpicture}
+	[every node/.style={inner sep=0pt}]
+	\node (1) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (50.0pt, -130pt)  {};
+	\node (2) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (135pt, -130pt)  {};
+	\node (3) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (220pt, -130pt)  {};
+	\node (4) [circle, minimum size=31.25pt, fill=lime, line width=0.625pt, draw=black] at (305pt, -130pt)  {};
+	\node (5) [circle, minimum size=50.0pt, fill=teal, line width=0.625pt, draw=black] at (390pt, -130pt)  {};
+	\draw [line width=0.625, ->, >=latex, color=black] (1) to  (2);
+	\draw [line width=0.625, ->, >=latex, color=black] (2) to  (3);
+	\draw [line width=0.625, ->, >=latex, color=black] (3) to  (4);
+	\draw [line width=0.625, ->, >=latex, color=black] (4) to  (5);
+	\end{tikzpicture}
+\end{center}
+Using the described equations \ref{eq:1} and \ref{eq:3}, we can construct a graph of the expected price with and without incremental backups included.
+\begin{figure}[H]
+	\begin{minipage}{1.0\textwidth}
+		\centering
+		\includegraphics[width=0.7\textwidth]{Weekly_full.png}
+		\caption{Full only and Whole model}\label{Fig:FullWeekly}
+	\end{minipage}
+\end{figure}
+The next plot shows the relation between the work rate and recovery rate of data with respect to the amount of data lost:
+\begin{figure}[H]
+	\begin{minipage}{1.0\textwidth}
+		\centering
+		\includegraphics[width=0.7\textwidth]{Recovery_rate.png}
+		\caption{Connection between $w$ and $r$}\label{Fig:Rec_rate}
+	\end{minipage}
+\end{figure}
+The graphic below is generated from the Monte Carlo simulation and the stochastic recovery processes.
+\begin{figure}[H]
+	\begin{minipage}{1.0\textwidth}
+		\centering
+		\includegraphics[width=0.7\textwidth]{Weekly_full_carlo.png}
+		\caption{Monte Carlo simulation}\label{Fig:MonteCarlo}
+	\end{minipage}
+\end{figure}
+\blfootnote{In both Figure \ref{Fig:FullWeekly} and Figure \ref{Fig:MonteCarlo} the data showed is for a weekly full and daily incremental backups}
+The colors in Figure \ref{Fig:MonteCarlo} represent the type of the last backup, which was successful during the recovery, full, incremental or non-existing. A linear regression has been made of the data generated, which is to show that the effect of initial unsecured data fades with time, as the price of failure is calculated as the price to redo the whole work from the creation of the company.\par
+The plot below show the results of some of the possible strategies when $c = 1000$
+\begin{figure}[H]
+	\begin{minipage}{1.0\textwidth}
+		\centering
+		\includegraphics[width=0.7\textwidth]{3d_all_1.png}
+		\caption{Visualization for $c=1000$}\label{Fig:Whole_model}
+	\end{minipage}
+\end{figure}
+The next plot shows the prices of the best strategies with and without data correlation for different values of $c$.
+\begin{figure}[H]
+	\begin{minipage}{1.0\textwidth}
+		\centering
+		\includegraphics[width=0.7\textwidth]{correlation_vs_clean.png}
+		\caption{Comparison of the prices in the two cases}\label{Fig:Corr_vs_clean}
+	\end{minipage}
+\end{figure}
+We notice that for small $c$ the difference is big and then fades. This is due to the fact that when $c$ is bigger the optimal strategies use more frequent backups and therefore the chance to lose a significant part of the data vanishes.
+\newpage	
+\subsection{Results}
+The tables below summarize the results for the best strategies for different values of $c$ in the two considered cases.\par
+With data correlation:
+\begin{center}\label{table_corr}
+	\begin{tabular}{| l | l | l | l |}
+		\hline
+		Constant $c$ & Full interval & Incremental interval & Price\\ \hline
+		100 & 29 & 15 & 31.86\\ \hline
+		200 & 29 & 16 & 19.40\\ \hline
+		300 & 27 & 14 & 15.16\\ \hline
+		400 & 27 & 14 & 12.97\\ \hline
+		500 & 26 & 9 & 11.5\\ \hline
+		600 & 21 & 12 & 10.49\\ \hline
+		700 & 16 & 9 & 9.66\\ \hline
+		900 & 16 & 9 & 8.39\\ \hline
+		1000 & 16 & 6 & 7.94\\ \hline
+		1600 & 16 & 6 & 6.31\\ \hline
+		1700 & 11 & 6 & 6.15\\ \hline
+		3000 & 11 & 6 & 4.78\\ \hline
+		3100 & 8 & 5 & 4.71\\ \hline
+		7899 & 8 & 5 & 3.31\\ \hline
+		8000 & 6 & 3 & 3.29\\ \hline
+		10000 & 6 & 3 & 3.05\\ \hline
+	\end{tabular}
+\end{center}
+Without data correlation:
+\begin{center}\label{table_clean}
+	\begin{tabular}{| l | l | l | l |}
+		\hline
+		Constant $c$ & Full interval & Incremental interval & Price\\ \hline
+		100 & 29 & 16 & 36.72\\ \hline
+		200 & 29 & 10 & 23.9\\ \hline
+		300 & 26 & 9 & 19.04\\ \hline
+		400 & 21 & 8 & 16.49\\ \hline
+		500 & 17 & 6 & 14.62\\ \hline
+		600 & 16 & 6 & 13.18\\ \hline
+		900 & 16 & 6 & 10.76\\ \hline
+		1000 & 13 & 5 & 10.26\\ \hline
+		1300 & 13 & 5 & 9.08\\ \hline
+		1400 & 11 & 3 & 8.79\\ \hline
+		1500 & 8 & 3 & 8.51\\ \hline
+		4100 & 8 & 3 & 5.37\\ \hline
+		4200 & 6 & 3 & 5.32\\ \hline
+		4500 & 6 & 3 & 5.17\\ \hline
+		4600 & 5 & 2 & 5.11\\ \hline
+		6999 & 5 & 2 & 4.29\\ \hline
+		7100 & 4 & 2 & 4.26\\ \hline
+		10000 & 4 & 2 & 3.7\\ \hline
+	\end{tabular}
+\end{center}
 \end{document}
